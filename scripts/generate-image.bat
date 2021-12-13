@@ -1,0 +1,1 @@
+C:\Users\jorge\Documents\raytracing-rust\target\debug\raytracing-rust.exe > image.ppm

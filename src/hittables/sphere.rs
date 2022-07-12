@@ -10,22 +10,22 @@ pub struct Sphere {
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> HitResult {
-        /// Was 'oc'
+        // Was 'oc'
         let origin_to_center: Vec3 = ray.origin - self.center;
-        /// A param of quadratic equation
+        // A param of quadratic equation
         let a = ray.direction.squared_length();
-        /// Half the b param of quadratic equation
+        // Half the b param of quadratic equation
         let half_b = Vec3::dot_product(&origin_to_center, &ray.direction);
-        /// C param of quadratic equation
+        // C param of quadratic equation
         let c = origin_to_center.squared_length() - self.radius * self.radius;
 
-        /// Value inside the square root of the quadratic equation
+        // Value inside the square root of the quadratic equation
         let discriminant = half_b * half_b - a * c;
         if discriminant < 0.0 {
-            /// Negative number = no square root, so no hit
+            // Negative number = no square root, so no hit
             return HitResult::FALSE;
         }
-        /// Result of the square root
+        // Result of the square root
         let sqrt_discriminant = discriminant.sqrt();
 
         // Quadratic equation is (-half_b +- sqrtd) / a

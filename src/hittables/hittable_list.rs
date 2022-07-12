@@ -1,5 +1,5 @@
 use crate::hittables::{HitRecord, HitResult, Hittable};
-use crate::{Ray, Vec3};
+use crate::{Ray};
 
 #[derive(Debug, Clone)]
 pub struct HittableList<T: Hittable> {

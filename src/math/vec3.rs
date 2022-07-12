@@ -45,26 +45,26 @@ impl Vec3 {
         z: 0.0
     };
     pub const RIGHT: Vec3 = Vec3 {
-        x: 0.0,
-        y: 1.0,
+        x: 1.0,
+        y: 0.0,
         z: 0.0
     };
     pub const POSITIVE_INFINITY: Vec3 = Vec3 {
-        x: f64::INFINITY,
-        y: f64::INFINITY,
-        z: f64::INFINITY
+        x: f64::MAX,
+        y: f64::MAX,
+        z: f64::MAX
     };
     pub const NEGATIVE_INFINITY: Vec3 = Vec3 {
-        x: f64::NEG_INFINITY,
-        y: f64::NEG_INFINITY,
-        z: f64::NEG_INFINITY
+        x: f64::MIN,
+        y: f64::MIN,
+        z: f64::MIN
     };
 
-    pub fn from_float(val: f64) -> Vec3 {
-        Vec3 { x: val, y: val, z: val }
-    }
     pub fn new(x: f64, y: f64, z: f64) -> Vec3{
         Vec3 { x, y, z}
+    }
+    pub fn from_float(val: f64) -> Vec3 {
+        Vec3::new(val, val, val)
     }
     pub fn length(&self) -> f64 {
         self.squared_length().sqrt()
@@ -75,8 +75,9 @@ impl Vec3 {
     pub fn unit_vector(&self) -> Vec3 {
         self / self.length()
     }
+    //TODO: can this be the error?
     pub fn dot_product(a: &Vec3, b: &Vec3) -> f64 {
-        a.x * b.x + a.y * a.y + a.z * b.z
+        a.x * b.x + a.y * b.y + a.z * b.z
     }
     pub fn cross_product(a: &Vec3, b: &Vec3) -> Vec3 {
         Vec3{

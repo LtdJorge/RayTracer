@@ -18,3 +18,7 @@ Things that could be added when the three books are implemented:
 - IMGUI user interface to modify parameters
 - Arbitrary mesh support
 - OBJ or FBX (ugh) support. glTF is probably a better option
+- Spectral rendering
+- Full path-tracing
+- Full PBR
+- Better BRDF

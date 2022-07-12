@@ -7,7 +7,11 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn at(&self, t: f64) -> Point3 {
-        self.origin + t * self.direction
+    /**
+    #Arguments
+    * `distance` - 't' in the book. Distance in the ray where it is sampled.
+    */
+    pub fn at(&self, distance: f64) -> Point3 {
+        self.origin + distance * self.direction
     }
 }

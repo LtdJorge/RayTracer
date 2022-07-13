@@ -7,6 +7,9 @@ pub struct Ray {
 }
 
 impl Ray {
+    pub fn new(origin: Point3, direction: Vec3) -> Ray {
+        Ray { origin, direction }
+    }
     /**
     #Arguments
     * `distance` - 't' in the book. Distance in the ray where it is sampled.

@@ -13,6 +13,7 @@ This will produce an "image.ppm" file, which can be opened with IrfanView on Win
 
 ---
 Things that could be added when the three books are implemented:
+- Actix actors support
 - CUDA and/or HIP backend
 - Vulkan/OpenGL display
 - IMGUI user interface to modify parameters

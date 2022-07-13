@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 mod hit_record;
 mod sphere;
 mod hittable_list;

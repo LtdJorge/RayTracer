@@ -1,4 +1,6 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign};
+use crate::math::random_double_in_range;
+use crate::random_double;
 
 // TODO: add generics
 #[derive(Debug, Clone, Copy)]
@@ -85,6 +87,24 @@ impl Vec3 {
             y: a.z * b.x - a.x * b.z,
             z: a.x * b.y - a.y * b.x
         }
+    }
+    pub fn random() -> Vec3 {
+        Vec3::new(random_double(), random_double(), random_double())
+    }
+    pub fn random_in_range(min: f64, max: f64) -> Vec3 {
+        Vec3::new(random_double_in_range(min, max), random_double_in_range(min, max), random_double_in_range(min, max))
+    }
+    pub fn random_point_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random_in_range(-1.0, 1.0);
+            if p.squared_length() >= 1.0 {
+                continue;
+            }
+            return p;
+        }
+    }
+    pub fn random_point_in_unit_vector() -> Vec3 {
+        Vec3::random_point_in_unit_sphere().unit_vector()
     }
 }
 

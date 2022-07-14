@@ -77,7 +77,6 @@ impl Vec3 {
     pub fn unit_vector(&self) -> Vec3 {
         self / self.length()
     }
-    //TODO: can this be the error?
     pub fn dot_product(a: &Vec3, b: &Vec3) -> f64 {
         a.x * b.x + a.y * b.y + a.z * b.z
     }
@@ -105,6 +104,13 @@ impl Vec3 {
     }
     pub fn random_point_in_unit_vector() -> Vec3 {
         Vec3::random_point_in_unit_sphere().unit_vector()
+    }
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+        (self.x.abs() < s) && (self.y.abs() < s) && (self.z.abs() < s)
+    }
+    pub fn reflect(vec_in: Vec3, normal: Vec3) -> Vec3 {
+        vec_in - 2.0 * Vec3::dot_product(&vec_in, &normal) * normal
     }
 }
 

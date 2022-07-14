@@ -1,15 +1,23 @@
-use crate::{Color, Hittable, HittableList, math, Point3, Ray, Vec3};
+use crate::{Color, Hittable, HittableList, math, Point3, Ray, Vec3, rendering::materials};
+use crate::rendering::materials::{hemispheric_scattering_render_function, lambertian_render_function};
 
 pub fn ray_color<T: Hittable>(ray: &Ray, world: &HittableList<T>, depth: i32) -> Color {
     if depth <= 0 {
         return Color::ZERO;
     }
 
-    let hit_result = world.hit(ray, 0.0001, math::INFINITY);
+    let hit_result = world.hit(ray, 0.0001, math::INFINITY).clone();
 
     if hit_result.got_hit {
-        let target: Point3 = hit_result.hit_record.p + hit_result.hit_record.normal + Vec3::random_point_in_unit_vector();
-        return 0.5 * ray_color(&Ray::new(hit_result.hit_record.p, target - hit_result.hit_record.p), world, depth - 1);
+        let mut scattered: Ray = Ray::new(Point3::ZERO, Vec3::ZERO);
+        let mut attenuation: Color = Color::ZERO;
+        if hit_result.hit_record.material.scatter(ray, &hit_result.hit_record, attenuation, scattered){
+            return attenuation * ray_color(&scattered, world, depth-1)
+            //TODO: check if scattered and attenuation are being modified
+        }
+        Color::ZERO;
+        // let target: Point3 = hemispheric_scattering_render_function(&hit_result.hit_record);
+        // return 0.5 * ray_color(&Ray::new(hit_result.hit_record.p, target - hit_result.hit_record.p), world, depth - 1);
     }
 
     // Background color, kinda skyish

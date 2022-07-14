@@ -1,15 +1,27 @@
-use crate::{Point3, Ray, Vec3};
+use crate::{Material, Point3, Ray, Vec3};
 use crate::hittables::hit_record::HitRecord;
 use crate::hittables::{HitResult, Hittable};
+use crate::rendering::{MaterialPointer};
 
-#[derive(Debug, Clone, Copy)]
-pub struct Sphere {
+#[derive(Clone)]
+pub struct Sphere<Mat: Material + Clone> {
     pub center: Point3,
-    pub radius: f64
+    pub radius: f64,
+    pub material: MaterialPointer<Mat>
 }
 
-impl Hittable for Sphere {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> HitResult {
+impl<Mat: Material + Clone> Sphere<Mat> {
+    pub fn new(center: Point3, radius: f64, material: MaterialPointer<Mat>) -> Sphere<Mat> {
+        Sphere{
+            center,
+            radius,
+            material
+        }
+    }
+}
+
+impl<Mat: Material + Clone> Hittable for Sphere<Mat> {
+    fn hit<Mat: Material + Clone>(&self, ray: &Ray, t_min: f64, t_max: f64) -> HitResult<T> {
         // Was 'oc'
         let origin_to_center: Vec3 = ray.origin - self.center;
         // A param of quadratic equation
@@ -45,25 +57,27 @@ impl Hittable for Sphere {
         let outward_normal = (point - self.center) / self.radius;
         let front_face = HitRecord::set_front_face(ray, outward_normal);
         let normal = HitRecord::set_face_normal(front_face, outward_normal);
-        let hit_record = HitRecord::create(point, normal, root);
-        // let outward_normal = (new_record.p - self.center) / self.radius;
-        // let front_face = HitRecord::set_front_face(ray, outward_normal);
+        let material = self.material.clone();
+        let hit_record = HitRecord::create(point, normal, root, material);
 
-        // let temp_rec = &HitRecord {
-        //     t: root,
-        //     p: ray.at(root),
-        //     normal: HitRecord::set_face_normal(front_face, outward_normal),
-        //     front_face
-        // };
+        /*let outward_normal = (new_record.p - self.center) / self.radius;
+        let front_face = HitRecord::set_front_face(ray, outward_normal);
 
-        // //TODO: this is the ugliest thing I've done ever
-        // record.create(
-        //     ray.at(root),
-        //     HitRecord::set_face_normal(front_face, outward_normal),
-        //     root,
-        //     front_face
-        // );
+        let temp_rec = &HitRecord {
+            t: root,
+            p: ray.at(root),
+            normal: HitRecord::set_face_normal(front_face, outward_normal),
+            front_face
+        };
 
-        return HitResult::create(hit_record);
+        //TODO: this is the ugliest thing I've done ever
+        record.create(
+            ray.at(root),
+            HitRecord::set_face_normal(front_face, outward_normal),
+            root,
+            front_face
+        );*/
+
+        HitResult::create(hit_record)
     }
 }

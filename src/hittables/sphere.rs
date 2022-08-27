@@ -1,7 +1,8 @@
 use std::sync::Arc;
+
 use crate::{Point3, Ray, Vec3};
+use crate::hittables::Hittable;
 use crate::hittables::hit_record::HitRecord;
-use crate::hittables::{Hittable};
 use crate::rendering::Material;
 
 #[derive(Clone)]

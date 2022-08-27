@@ -1,5 +1,5 @@
-use crate::hittables::HitRecord;
 use crate::{Color, Ray};
+use crate::hittables::HitRecord;
 
 pub trait Material {
     fn scatter(&self, ray_in: &Ray, record: &HitRecord) -> Option<ScatteringResult>;

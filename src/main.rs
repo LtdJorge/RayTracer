@@ -1,4 +1,18 @@
 #![allow(dead_code)]
+
+use std::sync::Arc;
+
+use rayon::prelude::*;
+
+use output::image;
+use rendering::sampling;
+
+use crate::hittables::{Hittable, HittableList, Sphere};
+use crate::image::write_color_multisample_batch;
+use crate::materials::{LambertianMaterial, MetallicMaterial};
+use crate::math::{clamp, Color, Point3, random_double, Ray, Vec3};
+use crate::rendering::{Camera};
+
 /// Peter Shirley's "Raytracing in one Weekend" implemented in Rust
 mod math;
 mod hittables;
@@ -6,24 +20,15 @@ mod rendering;
 mod output;
 mod materials;
 
-use std::sync::Arc;
-use output::image;
-use rendering::sampling;
-use rayon::prelude::*;
-use crate::hittables::{Hittable, HittableList, Sphere};
-use crate::materials::{LambertianMaterial, MetallicMaterial};
-use crate::image::write_color_multisample_batch;
-use crate::math::{clamp, Color, Point3, random_double, Ray, Vec3};
-use crate::rendering::{Camera, DiffuseLambertianMaterial, Material, MaterialPointer, MetallicMaterial};
 // use std::time::Instant;
 
 fn main() {
     // Image
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 800;
+    let image_width = 3840;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
-    let samples_per_pixel = 60;
-    let max_depth = 40;
+    let samples_per_pixel = 500;
+    let max_depth = 60;
 
     // World
     let mut world: HittableList<Sphere>  = HittableList{ objects: vec![] };
@@ -39,8 +44,7 @@ fn main() {
     // render_image(image_height, image_width, samples_per_pixel, camera, world, max_depth);
 }
 
-fn render_image<Mat: Material + Clone>(image_height: i32, image_width: i32, samples_per_pixel: i32, camera: Camera, world: HittableList<Sphere<Mat>>, max_depth: i32)
-where Mat: Material
+fn render_image(image_height: i32, image_width: i32, samples_per_pixel: i32, camera: Camera, world: HittableList<Sphere>, max_depth: i32)
 {
     // Render
     image::write_header(image_width, image_height, 255);
@@ -63,8 +67,7 @@ where Mat: Material
     eprintln!("Done");
 }
 
-fn render_image_iterator<Mat: Material + Clone>(image_height: i32, image_width: i32, samples_per_pixel: i32, camera: Camera, world: HittableList<Sphere<Mat>>, max_depth: i32)
-where Mat: Material
+fn render_image_iterator(image_height: i32, image_width: i32, samples_per_pixel: i32, camera: Camera, world: HittableList<Sphere>, max_depth: i32)
 {
     let mut pixels = vec![(0, Vec3::ZERO)];
 

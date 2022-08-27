@@ -1,5 +1,6 @@
 use std::sync::Arc;
-use crate::math::{Vec3, Point3, Ray};
+
+use crate::math::{Point3, Ray, Vec3};
 use crate::rendering::Material;
 
 #[derive(Clone)]
@@ -11,7 +12,7 @@ pub struct HitRecord{
 }
 
 
-impl<M> HitRecord<M> {
+impl HitRecord {
     pub fn set_face_normal(front_face: bool, outward_normal: Vec3) -> Vec3 {
         if front_face { outward_normal } else { -outward_normal }
     }

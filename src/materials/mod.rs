@@ -1,5 +1,6 @@
+pub use lambertian::LambertianMaterial;
+pub use metallic::MetallicMaterial;
+
 mod metallic;
 mod lambertian;
 
-pub use metallic::MetallicMaterial;
-pub use lambertian::LambertianMaterial;

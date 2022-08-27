@@ -1,6 +1,6 @@
 use crate::{Color, Ray, Vec3};
-use crate::rendering::{Material, ScatteringResult};
 use crate::hittables::HitRecord;
+use crate::rendering::{Material, ScatteringResult};
 
 #[derive(Clone, Copy)]
 pub struct MetallicMaterial {

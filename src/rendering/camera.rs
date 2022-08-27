@@ -1,4 +1,4 @@
-use crate::math::{Point3, Vec3, Ray};
+use crate::math::{Point3, Ray, Vec3};
 
 pub struct Camera {
     pub origin: Point3,

@@ -4,12 +4,14 @@ mod math;
 mod hittables;
 mod rendering;
 mod output;
+mod materials;
 
 use std::sync::Arc;
 use output::image;
 use rendering::sampling;
 use rayon::prelude::*;
 use crate::hittables::{Hittable, HittableList, Sphere};
+use crate::materials::{LambertianMaterial, MetallicMaterial};
 use crate::image::write_color_multisample_batch;
 use crate::math::{clamp, Color, Point3, random_double, Ray, Vec3};
 use crate::rendering::{Camera, DiffuseLambertianMaterial, Material, MaterialPointer, MetallicMaterial};
@@ -24,36 +26,11 @@ fn main() {
     let max_depth = 40;
 
     // World
-    let mut world  = HittableList{ objects: vec![] };
-    // let material1 = Material;
-    // let material2 = Material;
-    // world.add(Sphere{ center: Point3::new(0.0, 0.0, -1.0), radius: 0.5, material: Arc::new(material1) });
-    // world.add(Sphere{ center: Point3::new(0.0, -100.5, -1.0), radius: 100.0, material: Arc::new(material2) });
-    let material_ground: DiffuseLambertianMaterial = DiffuseLambertianMaterial{ albedo: Color::new(0.8, 0.8, 0.0) };
-    let material_center: DiffuseLambertianMaterial = DiffuseLambertianMaterial{ albedo: Color::new(0.7, 0.3, 0.3) };
-    let material_left: MetallicMaterial = MetallicMaterial{ albedo: Color::new(0.8, 0.8, 0.8) };
-    let material_right: MetallicMaterial = MetallicMaterial{ albedo: Color::new(0.8, 0.6, 0.2) };
-
-    world.add(Sphere::new(Point3{
-        x: 0.0,
-        y: -100.5,
-        z: -1.0
-    },  100.0, MaterialPointer{ material: Arc::new(material_ground) }));
-    world.add(Sphere::new(Point3{
-        x: 0.0,
-        y: 0.0,
-        z: -1.0
-    },  0.5, MaterialPointer{ material: Arc::new(material_center) }));
-    world.add(Sphere::new(Point3{
-        x: -1.0,
-        y: 0.0,
-        z: -1.0
-    },  0.5, MaterialPointer{ material: Arc::new(material_left) }));
-    world.add(Sphere::new(Point3{
-        x: 1.0,
-        y: 0.0,
-        z: -1.0
-    },  0.5, MaterialPointer{ material: Arc::new(material_right) }));
+    let mut world: HittableList<Sphere>  = HittableList{ objects: vec![] };
+    let material_lambert = LambertianMaterial{albedo: Color{ x: 0.8, y: 0.8, z: 0.0 }};
+    let material_metallic = MetallicMaterial {albedo: Color{ x: 0.8, y: 0.8, z: 0.0 }, fuzz: 0.9};
+    world.add(Sphere{ center: Point3::new(0.0, 0.0, -1.0), radius: 0.5, material: Arc::new(material_lambert) });
+    world.add(Sphere{ center: Point3::new(0.0, -100.5, -1.0), radius: 100.0, material: Arc::new(material_metallic) });
 
     // Camera
     let camera = Camera::new();

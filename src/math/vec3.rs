@@ -105,12 +105,20 @@ impl Vec3 {
     pub fn random_point_in_unit_vector() -> Vec3 {
         Vec3::random_point_in_unit_sphere().unit_vector()
     }
-    pub fn near_zero(&self) -> bool {
-        let s = 1e-8;
-        (self.x.abs() < s) && (self.y.abs() < s) && (self.z.abs() < s)
+    pub fn random_point_in_hemisphere(normal: Vec3) -> Vec3 {
+        let in_unit_sphere = Vec3::random_point_in_unit_sphere();
+        if Vec3::dot_product(&in_unit_sphere, &normal) > 0.0 {
+            in_unit_sphere
+        } else {
+            -in_unit_sphere
+        }
     }
-    pub fn reflect(vec_in: Vec3, normal: Vec3) -> Vec3 {
-        vec_in - 2.0 * Vec3::dot_product(&vec_in, &normal) * normal
+    pub fn reflect(vector: Vec3, normal: Vec3) -> Vec3 {
+        vector - 2.0 * Vec3::dot_product(&vector, &normal) * normal
+    }
+    pub fn near_zero(&self) -> bool {
+        const S: f64 = 1e-8;
+        (self.x.abs() < S) && (self.y.abs() < S) && (self.z.abs() < S)
     }
 }
 
@@ -221,13 +229,13 @@ impl Index<usize> for Vec3 {
     type Output = f64;
 
     fn index(&self, index: usize) -> &Self::Output {
-        return if index == 0 { &self.x } else if index == 1 { &self.y } else { &self.z }
+        if index == 0 { &self.x } else if index == 1 { &self.y } else { &self.z }
     }
 }
 
 impl IndexMut<usize> for Vec3 {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        return if index == 0 { &mut self.x } else if index == 1 { &mut self.y } else { &mut self.z }
+        if index == 0 { &mut self.x } else if index == 1 { &mut self.y } else { &mut self.z }
     }
 }
 

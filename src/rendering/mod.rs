@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 mod camera;
 pub(crate) mod sampling;
-mod materials;
+mod material;
 
 pub use camera::{Camera};
-pub use materials::{Material, DiffuseLambertianMaterial, MetallicMaterial, MaterialPointer};
+pub use material::{Material, ScatteringResult};

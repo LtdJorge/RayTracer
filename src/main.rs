@@ -25,17 +25,21 @@ mod materials;
 fn main() {
     // Image
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 3840;
+    let image_width = 1920;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
-    let samples_per_pixel = 500;
-    let max_depth = 60;
+    let samples_per_pixel = 250;
+    let max_depth = 40;
 
     // World
     let mut world: HittableList<Sphere>  = HittableList{ objects: vec![] };
-    let material_lambert = LambertianMaterial{albedo: Color{ x: 0.8, y: 0.8, z: 0.0 }};
-    let material_metallic = MetallicMaterial {albedo: Color{ x: 0.8, y: 0.8, z: 0.0 }, fuzz: 0.9};
-    world.add(Sphere{ center: Point3::new(0.0, 0.0, -1.0), radius: 0.5, material: Arc::new(material_lambert) });
-    world.add(Sphere{ center: Point3::new(0.0, -100.5, -1.0), radius: 100.0, material: Arc::new(material_metallic) });
+    let material_ground = LambertianMaterial{albedo: Color{ x: 0.8, y: 0.8, z: 0.0 }};
+    let material_center = LambertianMaterial {albedo: Color{ x: 0.7, y: 0.3, z: 0.3 }};
+    let material_left = MetallicMaterial {albedo: Color{ x: 0.8, y: 0.8, z: 0.8 }, fuzz: 0.3 };
+    let material_right = MetallicMaterial {albedo: Color{ x: 0.8, y: 0.6, z: 0.2 }, fuzz: 1.0 };
+    world.add(Sphere{ center: Point3::new(0.0, -100.5, -1.0), radius: 100.0, material: Arc::new(material_ground) });
+    world.add(Sphere{ center: Point3::new(0.0, 0.0, -1.0), radius: 0.5, material: Arc::new(material_center) });
+    world.add(Sphere{ center: Point3::new(-1.0, 0.0, -1.0), radius: 0.5, material: Arc::new(material_left) });
+    world.add(Sphere{ center: Point3::new(1.0, 0.0, -1.0), radius: 0.5, material: Arc::new(material_right) });
 
     // Camera
     let camera = Camera::new();

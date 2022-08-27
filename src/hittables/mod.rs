@@ -5,6 +5,6 @@ mod hittable_list;
 mod hittable;
 
 pub use hittable_list::HittableList;
-pub use hittable::{ Hittable, HitResult };
+pub use hittable::{ Hittable };
 pub use hit_record::HitRecord;
 pub use sphere::Sphere;

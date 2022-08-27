@@ -5,11 +5,12 @@ pub fn ray_color<T: Hittable>(ray: &Ray, world: &HittableList<T>, depth: i32) ->
         return Color::ZERO;
     }
 
-    let hit_result = world.hit(ray, 0.0001, math::INFINITY);
-
-    if hit_result.got_hit {
-        let target: Point3 = hit_result.hit_record.p + hit_result.hit_record.normal + Vec3::random_point_in_unit_vector();
-        return 0.5 * ray_color(&Ray::new(hit_result.hit_record.p, target - hit_result.hit_record.p), world, depth - 1);
+    //TODO: instead of out parameters, return optionals
+    if let Some(record) = world.hit(ray, 0.0001, math::INFINITY){
+        if let Some(scatter) = record.material.scatter(ray, &record){
+            return scatter.attenuation * ray_color(&scatter.ray, world, depth-1)
+        }
+        return Color::ZERO
     }
 
     // Background color, kinda skyish

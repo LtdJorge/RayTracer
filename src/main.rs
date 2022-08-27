@@ -4,10 +4,13 @@ mod math;
 mod hittables;
 mod rendering;
 mod output;
+mod materials;
 
+use std::sync::Arc;
 use output::image;
 use rendering::sampling;
 use crate::hittables::{Hittable, HittableList, Sphere};
+use crate::materials::{LambertianMaterial, MetallicMaterial};
 use crate::math::{clamp, Color, Point3, random_double, Ray, Vec3};
 use crate::rendering::Camera;
 
@@ -21,8 +24,10 @@ fn main() {
 
     // World
     let mut world: HittableList<Sphere>  = HittableList{ objects: vec![] };
-    world.add(Sphere{ center: Point3::new(0.0, 0.0, -1.0), radius: 0.5 });
-    world.add(Sphere{ center: Point3::new(0.0, -100.5, -1.0), radius: 100.0 });
+    let material_lambert = LambertianMaterial{albedo: Color{ x: 0.8, y: 0.8, z: 0.0 }};
+    let material_metallic = MetallicMaterial {albedo: Color{ x: 0.8, y: 0.8, z: 0.0 }, fuzz: 0.9};
+    world.add(Sphere{ center: Point3::new(0.0, 0.0, -1.0), radius: 0.5, material: Arc::new(material_lambert) });
+    world.add(Sphere{ center: Point3::new(0.0, -100.5, -1.0), radius: 100.0, material: Arc::new(material_metallic) });
 
     // Camera
     let camera = Camera::new();
@@ -44,7 +49,7 @@ fn main() {
             }
             image::write_color_multisample(pixel_color, samples_per_pixel);
         }
-        eprintln!("Rendering: {}%", ((image_height - j) as f64 / image_height as f64) * 100.0);
+        // eprintln!("Rendering: {}%", ((image_height - j) as f64 / image_height as f64) * 100.0);
     }
     eprintln!("Done");
 }

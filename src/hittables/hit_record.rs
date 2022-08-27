@@ -10,7 +10,8 @@ pub struct HitRecord{
     pub material: Arc<dyn Material + Send + Sync>
 }
 
-impl HitRecord {
+
+impl<M> HitRecord<M> {
     pub fn set_face_normal(front_face: bool, outward_normal: Vec3) -> Vec3 {
         if front_face { outward_normal } else { -outward_normal }
     }

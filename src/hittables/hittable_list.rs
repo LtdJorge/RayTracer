@@ -2,12 +2,12 @@ use crate::hittables::{HitRecord, Hittable};
 use crate::{Ray};
 
 #[derive(Debug, Clone)]
-pub struct HittableList<T: Hittable> {
-    pub objects: Vec<T>,
+pub struct HittableList<Geometry: Hittable> {
+    pub objects: Vec<Geometry>,
 }
 
-impl<T: Hittable> HittableList<T> {
-    pub fn add(&mut self, object: T) {
+impl<Geometry: Hittable> HittableList<Geometry> {
+    pub fn add(&mut self, object: Geometry) {
         self.objects.push(object)
     }
 }

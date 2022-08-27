@@ -53,6 +53,25 @@ pub fn write_color_multisample(pixel_color: Color, samples_per_pixel: i32){
     println!("{} {} {}", clamped_red, clamped_green, clamped_blue);
 }
 
+pub fn write_color_multisample_batch(pixels: Vec<(i32, Color)>, samples_per_pixel: i32, ){
+    for (_pixel, pixel_color) in pixels {
+        let mut red = pixel_color.x;
+        let mut green = pixel_color.y;
+        let mut blue = pixel_color.z;
+
+        let scale = 1.0 / samples_per_pixel as f64;
+        red = (red * scale).sqrt();
+        green = (green * scale).sqrt();
+        blue = (blue * scale).sqrt();
+
+        let clamped_red = (256.0 * clamp(red, 0.0, 0.999)) as i32;
+        let clamped_green = (256.0 * clamp(green, 0.0, 0.999)) as i32;
+        let clamped_blue = (256.0 * clamp(blue, 0.0, 0.999)) as i32;
+
+        println!("{} {} {}", clamped_red, clamped_green, clamped_blue);
+    }
+}
+
 pub fn write_header(image_width: i32, image_height: i32, max_color: i32){
     println!("P3");
     println!("{} {}", image_width, image_height);

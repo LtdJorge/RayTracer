@@ -1,11 +1,11 @@
-use crate::{Color, Hittable, HittableList, math, Point3, Ray, Vec3};
+use crate::{Color, Hittable, HittableList, math, Point3, Ray, Vec3, rendering::materials};
+use crate::rendering::materials::{hemispheric_scattering_render_function, lambertian_render_function};
 
 pub fn ray_color<T: Hittable>(ray: &Ray, world: &HittableList<T>, depth: i32) -> Color {
     if depth <= 0 {
         return Color::ZERO;
     }
 
-    //TODO: instead of out parameters, return optionals
     if let Some(record) = world.hit(ray, 0.0001, math::INFINITY){
         if let Some(scatter) = record.material.scatter(ray, &record){
             return scatter.attenuation * ray_color(&scatter.ray, world, depth-1)

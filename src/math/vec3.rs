@@ -77,7 +77,6 @@ impl Vec3 {
     pub fn unit_vector(&self) -> Vec3 {
         self / self.length()
     }
-    //TODO: can this be the error?
     pub fn dot_product(a: &Vec3, b: &Vec3) -> f64 {
         a.x * b.x + a.y * b.y + a.z * b.z
     }

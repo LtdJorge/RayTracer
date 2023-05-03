@@ -56,19 +56,4 @@ impl Camera {
                 - self.origin,
         }
     }
-    pub fn set_aspect_ratio(mut self, ratio: f64) {
-        self.aspect_ratio = ratio
-    }
-    pub fn set_origin(mut self, ratio: f64) {
-        self.aspect_ratio = ratio
-    }
-    pub fn set_lower_left_corner(mut self, ratio: f64) {
-        self.aspect_ratio = ratio
-    }
-    pub fn set_aspect_ratio(mut self, ratio: f64) {
-        self.aspect_ratio = ratio
-    }
-    pub fn set_aspect_ratio(mut self, ratio: f64) {
-        self.aspect_ratio = ratio
-    }
 }

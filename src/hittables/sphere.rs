@@ -1,15 +1,13 @@
-use std::sync::Arc;
-
-use crate::{Point3, Ray, Vec3};
-use crate::hittables::Hittable;
 use crate::hittables::hit_record::HitRecord;
-use crate::rendering::Material;
+use crate::hittables::Hittable;
+use crate::rendering::UberShader;
+use crate::{Point3, Ray, Vec3};
 
 #[derive(Clone)]
 pub struct Sphere {
-    pub center: Point3,
-    pub radius: f64,
-    pub material: Arc<dyn Material + Send + Sync>
+    pub(crate) center: Point3,
+    pub(crate) radius: f64,
+    pub(crate) material: UberShader,
 }
 
 impl Hittable for Sphere {
@@ -30,7 +28,7 @@ impl Hittable for Sphere {
 
         // Quadratic equation is (-half_b +- sqrtd) / a
         // The negative value of the sqrt value is used first because it would be closer
-        let mut  root = (-half_b - sqrt_discriminant) / a;
+        let mut root = (-half_b - sqrt_discriminant) / a;
         // If root is outside range
         if root < t_min || t_max < root {
             // Use the positive sqrt value
@@ -48,5 +46,15 @@ impl Hittable for Sphere {
         let hit_record = HitRecord::new(point, normal, root, self.material.clone());
 
         Some(hit_record)
+    }
+}
+
+impl Sphere {
+    pub fn new(center: Point3, radius: f64, material: UberShader) -> Self {
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }

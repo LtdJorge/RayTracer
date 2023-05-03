@@ -2,8 +2,6 @@
 
 // Peter Shirley's "Raytracing in one Weekend" implemented in Rust
 
-use std::sync::Arc;
-
 use rayon::prelude::*;
 
 use output::image;
@@ -11,9 +9,9 @@ use rendering::sampling;
 
 use crate::hittables::{Hittable, HittableList, Sphere};
 use crate::image::write_color_multisample_batch;
-use crate::materials::{LambertianMaterial, MetallicMaterial};
 use crate::math::{clamp, random_double, Color, Point3, Ray, Vec3};
 use crate::rendering::Camera;
+use crate::rendering::UberShader;
 
 mod hittables;
 mod materials;
@@ -25,64 +23,70 @@ mod rendering;
 
 fn main() {
     // Image
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width = 1280;
+    let aspect_ratio = 21.0 / 9.0;
+    let image_width = 1920;
     let image_height = (image_width as f64 / aspect_ratio) as i32;
     let samples_per_pixel = 100;
-    let max_depth = 20;
+    let max_depth = 40;
 
     // World
     let mut world: HittableList<Sphere> = HittableList { objects: vec![] };
-    let material_ground = LambertianMaterial {
-        albedo: Color {
+    let material_ground = UberShader::new(
+        Color {
             x: 0.8,
             y: 0.8,
             z: 0.0,
         },
-    };
-    let material_center = LambertianMaterial {
-        albedo: Color {
-            x: 0.7,
-            y: 0.3,
-            z: 0.3,
-        },
-    };
-    let material_left = MetallicMaterial {
-        albedo: Color {
+        false,
+        0.0,
+    );
+    let material_center = UberShader::new(
+        Color {
             x: 0.8,
             y: 0.8,
             z: 0.8,
         },
-        fuzz: 0.3,
-    };
-    let material_right = MetallicMaterial {
-        albedo: Color {
-            x: 0.8,
-            y: 0.6,
-            z: 0.2,
+        false,
+        0.0,
+    );
+    let material_left = UberShader::new(
+        Color {
+            x: 1.0,
+            y: 0.0,
+            z: 0.0,
         },
-        fuzz: 1.0,
-    };
-    world.add(Sphere {
-        center: Point3::new(0.0, -100.5, -1.0),
-        radius: 100.0,
-        material: Arc::new(material_ground),
-    });
-    world.add(Sphere {
-        center: Point3::new(0.0, 0.0, -1.0),
-        radius: 0.5,
-        material: Arc::new(material_center),
-    });
-    world.add(Sphere {
-        center: Point3::new(-1.0, 0.0, -1.0),
-        radius: 0.5,
-        material: Arc::new(material_left),
-    });
-    world.add(Sphere {
-        center: Point3::new(1.0, 0.0, -1.0),
-        radius: 0.5,
-        material: Arc::new(material_right),
-    });
+        true,
+        0.01,
+    );
+    let material_right = UberShader::new(
+        Color {
+            x: 0.8,
+            y: 0.8,
+            z: 0.8,
+        },
+        true,
+        1.0,
+    );
+    world.add(Sphere::new(
+        Point3::new(0.0, -100.5, -5.0),
+        100.0,
+        material_ground,
+    ));
+    world.add(Sphere::new(
+        Point3::new(3.0, 2.0, -5.0),
+        0.5,
+        material_center,
+    ));
+    world.add(Sphere::new(
+        Point3::new(-1.0, 0.0, -5.0),
+        0.5,
+        material_left,
+    ));
+    world.add(Sphere::new(
+        Point3::new(1.0, 0.0, -5.0),
+        0.5,
+        material_right,
+    ));
 
     // Camera
     let camera = Camera::new();
@@ -118,7 +122,7 @@ fn render_image(
                 let u = (i as f64 + random_double()) / (image_width as f64);
                 let v = (j as f64 + random_double()) / (image_height as f64);
                 let ray = camera.get_ray(u, v);
-                pixel_color += sampling::ray_color(&ray, &world, max_depth);
+                pixel_color += sampling::ray_color(ray, &world, max_depth);
             }
             image::write_color_multisample(pixel_color, samples_per_pixel);
         }
@@ -151,7 +155,7 @@ fn render_image_iterator(
                 let u = (x as f64 + random_double()) / (image_width as f64);
                 let v = (y as f64 + random_double()) / (image_height as f64);
                 let ray = camera.get_ray(u, v);
-                pixel_color += sampling::ray_color(&ray, &world, max_depth);
+                pixel_color += sampling::ray_color(ray, &world, max_depth);
                 // eprintln!("Pixel: {} X: {} Y: {} U: {} V: {} Color: {:?}", pixel, x, y, u, v, pixel_color);
             }
             (pixel, pixel_color)

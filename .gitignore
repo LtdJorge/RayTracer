@@ -4,3 +4,4 @@
 perf.data*
 *.svg
 profile.linux-perf.*
+*.exr

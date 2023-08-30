@@ -1,4 +1,5 @@
 use crate::{clamp, Color};
+use rayon::prelude::*;
 
 fn write_test_image() {
     const IMAGE_WIDTH: i32 = 256;
@@ -25,18 +26,18 @@ fn write_test_image() {
     eprintln!("Done");
 }
 
-fn write_pixel(red: f64, green: f64, blue: f64){
+fn write_pixel(red: f64, green: f64, blue: f64) {
     println!("{} {} {}", red, green, blue);
 }
 
-fn write_color(pixel_color: Color){
+fn write_color(pixel_color: Color) {
     let red: i32 = (pixel_color.x * 255.999) as i32;
     let green: i32 = (pixel_color.y * 255.999) as i32;
     let blue: i32 = (pixel_color.z * 255.999) as i32;
     println!("{} {} {}", red, green, blue);
 }
 
-pub fn write_color_multisample(pixel_color: Color, samples_per_pixel: i32){
+pub fn write_color_multisample(pixel_color: Color, samples_per_pixel: i32) {
     let mut red = pixel_color.x;
     let mut green = pixel_color.y;
     let mut blue = pixel_color.z;
@@ -53,7 +54,7 @@ pub fn write_color_multisample(pixel_color: Color, samples_per_pixel: i32){
     println!("{} {} {}", clamped_red, clamped_green, clamped_blue);
 }
 
-pub fn write_color_multisample_batch(pixels: Vec<(i32, Color)>, samples_per_pixel: i32, ){
+pub fn write_color_multisample_batch(pixels: Vec<(i32, Color)>, samples_per_pixel: i32) {
     for (_pixel, pixel_color) in pixels {
         let mut red = pixel_color.x;
         let mut green = pixel_color.y;
@@ -71,8 +72,28 @@ pub fn write_color_multisample_batch(pixels: Vec<(i32, Color)>, samples_per_pixe
         println!("{} {} {}", clamped_red, clamped_green, clamped_blue);
     }
 }
+//TODO: implement in parallel
+#[cfg(feature = "parallel")]
+pub fn write_color_multisample_iter(pixels: Vec<(i32, Color)>, samples_per_pixel: i32) {
+    pixels.into_par_iter().chunks(4).for_each(|chunk| {
+        let mut red = pixel_color.x;
+        let mut green = pixel_color.y;
+        let mut blue = pixel_color.z;
 
-pub fn write_header(image_width: i32, image_height: i32, max_color: i32){
+        let scale = 1.0 / samples_per_pixel as f64;
+        red = (red * scale).sqrt();
+        green = (green * scale).sqrt();
+        blue = (blue * scale).sqrt();
+
+        let clamped_red = (256.0 * clamp(red, 0.0, 0.999)) as i32;
+        let clamped_green = (256.0 * clamp(green, 0.0, 0.999)) as i32;
+        let clamped_blue = (256.0 * clamp(blue, 0.0, 0.999)) as i32;
+
+        println!("{} {} {}", clamped_red, clamped_green, clamped_blue);
+    });
+}
+
+pub fn write_header(image_width: i32, image_height: i32, max_color: i32) {
     println!("P3");
     println!("{} {}", image_width, image_height);
     println!("{}", max_color);

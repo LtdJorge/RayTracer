@@ -12,3 +12,6 @@ flamegraph = "0.6.2"
 
 [profile.release]
 debug = true
+
+[features]
+parallel = []

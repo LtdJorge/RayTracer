@@ -55,14 +55,14 @@ impl Vec3 {
         z: 0.0,
     };
     pub const POSITIVE_INFINITY: Vec3 = Vec3 {
-        x: f64::MAX,
-        y: f64::MAX,
-        z: f64::MAX,
+        x: f64::INFINITY,
+        y: f64::INFINITY,
+        z: f64::INFINITY,
     };
     pub const NEGATIVE_INFINITY: Vec3 = Vec3 {
-        x: f64::MIN,
-        y: f64::MIN,
-        z: f64::MIN,
+        x: f64::NEG_INFINITY,
+        y: f64::NEG_INFINITY,
+        z: f64::NEG_INFINITY,
     };
 
     pub fn new(x: f64, y: f64, z: f64) -> Self {

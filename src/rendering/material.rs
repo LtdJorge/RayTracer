@@ -30,7 +30,9 @@ impl Material for UberShader {
                 );
                 let attenuation = self.albedo;
                 if Vec3::dot_product(&scattered.direction, &record.normal) > 0.0_f64 {
+                    #[cfg(feature = "debug_prints")]
                     eprintln!("Not absorbed: metallic");
+
                     Some(ScatteringResult {
                         ray: scattered,
                         attenuation,
@@ -47,6 +49,8 @@ impl Material for UberShader {
                 if scatter_direction.near_zero() {
                     scatter_direction = record.normal;
                 }
+                #[cfg(feature = "debug_prints")]
+                eprintln!("Lambertian");
 
                 Some(ScatteringResult {
                     ray: Ray::new(record.point, scatter_direction),

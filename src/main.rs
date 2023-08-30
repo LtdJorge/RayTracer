@@ -10,6 +10,7 @@ use rendering::sampling;
 use crate::hittables::{Hittable, HittableList, Sphere};
 use crate::image::write_color_multisample_batch;
 use crate::math::{clamp, random_double, Color, Point3, Ray, Vec3};
+use crate::output::image::write_exr;
 use crate::rendering::Camera;
 use crate::rendering::UberShader;
 
@@ -23,11 +24,11 @@ mod rendering;
 
 fn main() {
     // Image
-    let aspect_ratio = 21.0 / 9.0;
-    let image_width = 1920;
-    let image_height = (image_width as f64 / aspect_ratio) as i32;
-    let samples_per_pixel = 100;
-    let max_depth = 40;
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width: usize = 1920;
+    let image_height = (image_width as f64 / aspect_ratio) as usize;
+    let samples_per_pixel = 50;
+    let max_depth = 20;
 
     // World
     let mut world: HittableList<Sphere> = HittableList { objects: vec![] };
@@ -60,30 +61,30 @@ fn main() {
     );
     let material_right = UberShader::new(
         Color {
-            x: 0.8,
-            y: 0.8,
-            z: 0.8,
+            x: 0.1,
+            y: 0.1,
+            z: 0.1,
         },
         true,
-        1.0,
+        0.0,
     );
     world.add(Sphere::new(
-        Point3::new(0.0, -100.5, -5.0),
+        Point3::new_away_from_camera(0.0, -100.5, -5.0),
         100.0,
         material_ground,
     ));
     world.add(Sphere::new(
-        Point3::new(3.0, 2.0, -5.0),
+        Point3::new_away_from_camera(3.0, 2.0, -5.0),
         0.5,
         material_center,
     ));
     world.add(Sphere::new(
-        Point3::new(-1.0, 0.0, -5.0),
+        Point3::new_away_from_camera(-1.0, 0.0, -5.0),
         0.5,
         material_left,
     ));
     world.add(Sphere::new(
-        Point3::new(1.0, 0.0, -5.0),
+        Point3::new_away_from_camera(1.0, 0.0, -5.0),
         0.5,
         material_right,
     ));
@@ -103,8 +104,8 @@ fn main() {
 }
 
 fn render_image(
-    image_height: i32,
-    image_width: i32,
+    image_height: usize,
+    image_width: usize,
     samples_per_pixel: i32,
     camera: Camera,
     world: HittableList<Sphere>,
@@ -132,15 +133,15 @@ fn render_image(
 }
 
 fn render_image_iterator(
-    image_height: i32,
-    image_width: i32,
+    image_height: usize,
+    image_width: usize,
     samples_per_pixel: i32,
     camera: Camera,
     world: HittableList<Sphere>,
     max_depth: i32,
 ) {
     let pixel_count = image_height * image_width;
-    let mut pixels: Vec<(i32, Color)> = Vec::with_capacity(pixel_count as usize);
+    let mut pixels: Vec<(usize, Color)> = Vec::with_capacity(pixel_count);
 
     // let now = Instant::now();
     (0..(image_height * image_width))
@@ -161,12 +162,20 @@ fn render_image_iterator(
             (pixel, pixel_color)
         })
         .collect_into_vec(&mut pixels);
+
     // let elapsed = now.elapsed();
     pixels.sort_by(|(pixel_a, _color_a), (pixel_b, _color_b)| pixel_b.cmp(pixel_a));
+    /*
     // let elapsed2 = now.elapsed();
-
-    image::write_header(image_width, image_height, 255);
-    write_color_multisample_batch(pixels, samples_per_pixel);
+       image::write_header(image_width, image_height, 255);
+       write_color_multisample_batch(pixels, samples_per_pixel);
+    */
+    write_exr(
+        "./image.exr".parse().unwrap(),
+        (image_width, image_height),
+        pixels,
+        samples_per_pixel,
+    );
     // eprintln!("{:?}\n\n", pixels);
     // eprintln!("First timer: {:.4?} Second timer: {:.4?} Difference: {:.4?}", elapsed, elapsed2, elapsed2 - elapsed);
     eprintln!("Done");

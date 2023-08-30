@@ -1,9 +1,11 @@
 use crate::{clamp, Color};
+use exr::prelude::*;
 use rayon::prelude::*;
+use std::path::PathBuf;
 
 fn write_test_image() {
-    const IMAGE_WIDTH: i32 = 256;
-    const IMAGE_HEIGHT: i32 = 256;
+    const IMAGE_WIDTH: usize = 256;
+    const IMAGE_HEIGHT: usize = 256;
     const MAX_COLOR: i32 = 255;
 
     write_header(IMAGE_WIDTH, IMAGE_HEIGHT, MAX_COLOR);
@@ -54,7 +56,7 @@ pub fn write_color_multisample(pixel_color: Color, samples_per_pixel: i32) {
     println!("{} {} {}", clamped_red, clamped_green, clamped_blue);
 }
 
-pub fn write_color_multisample_batch(pixels: Vec<(i32, Color)>, samples_per_pixel: i32) {
+pub fn write_color_multisample_batch(pixels: Vec<(usize, Color)>, samples_per_pixel: i32) {
     for (_pixel, pixel_color) in pixels {
         let mut red = pixel_color.x;
         let mut green = pixel_color.y;
@@ -93,8 +95,56 @@ pub fn write_color_multisample_iter(pixels: Vec<(i32, Color)>, samples_per_pixel
     });
 }
 
-pub fn write_header(image_width: i32, image_height: i32, max_color: i32) {
+pub fn write_header(image_width: usize, image_height: usize, max_color: i32) {
     println!("P3");
     println!("{} {}", image_width, image_height);
     println!("{}", max_color);
+}
+
+pub fn write_exr(
+    path: PathBuf,
+    (x_size, y_size): (usize, usize),
+    pixels: Vec<(usize, Color)>,
+    samples_per_pixel: i32,
+) {
+    let scale = 1.0 / samples_per_pixel as f64;
+
+    let channel = SpecificChannels::rgb(|position: Vec2<usize>| {
+        let x = position.0;
+        let y = position.1;
+        let pixel_position = y * x_size + x;
+        let color: Color = pixels[pixel_position].1;
+        (
+            (color.x * scale).sqrt() as f32,
+            (color.y * scale).sqrt() as f32,
+            (color.z * scale).sqrt() as f32,
+        )
+    });
+    // let channel = SpecificChannels::build()
+    //     .with_channel("B")
+    //     .with_channel("G")
+    //     .with_channel("R")
+    //     .with_pixel_fn(|position| {
+    //         let x = position.0;
+    //         let y = position.1;
+    //         let pixel_position = y * x_size + x;
+    //         let color: Color = pixels[pixel_position].1;
+    //         (color.z as f32, color.y as f32, color.x as f32)
+    //     });
+    let image = Image::from_channels((x_size, y_size), channel);
+    let mut current_progress_percentage = 0;
+
+    image
+        .write()
+        .on_progress(|progress| {
+            let new_progress = (progress * 100.0) as usize;
+            if new_progress != current_progress_percentage {
+                current_progress_percentage = new_progress;
+                println!("progress: {}%", current_progress_percentage)
+            }
+        })
+        .to_file(path)
+        .unwrap();
+
+    eprintln!("created file custom_channels.exr");
 }

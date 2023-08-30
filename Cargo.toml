@@ -9,7 +9,7 @@ edition = "2021"
 rand = "0.8.5"
 rayon = "1.7.0"
 exr = "1.7.0"
-flamegraph = "0.6.2"
+flamegraph = "0.6.3"
 
 [profile.release]
 debug = true

@@ -8,10 +8,13 @@ edition = "2021"
 [dependencies]
 rand = "0.8.5"
 rayon = "1.7.0"
+exr = "1.7.0"
 flamegraph = "0.6.2"
 
 [profile.release]
 debug = true
+lto = true
+opt-level = 3
 
 [features]
 parallel = []

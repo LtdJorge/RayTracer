@@ -30,6 +30,7 @@ impl Material for UberShader {
                 );
                 let attenuation = self.albedo;
                 if Vec3::dot_product(&scattered.direction, &record.normal) > 0.0_f64 {
+                    eprintln!("Not absorbed: metallic");
                     Some(ScatteringResult {
                         ray: scattered,
                         attenuation,

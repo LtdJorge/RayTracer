@@ -1,11 +1,18 @@
 #![allow(dead_code)]
 
-pub use {random::random_double, random::random_double_in_range, ray::Ray, util::clamp, vec3::Color, vec3::Point3, vec3::Vec3};
+pub use {
+    random::{random_double, random_double_in_range, random_float, random_float_in_range},
+    ray::Ray,
+    util::clamp,
+    vec3::Color,
+    vec3::Point3,
+    vec3::Vec3,
+};
 
-mod vec3;
-mod ray;
 mod random;
+mod ray;
 mod util;
+mod vec3;
 mod vec4;
 
 pub const INFINITY: f64 = f64::MAX;

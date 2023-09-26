@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 rand = "0.8.5"
-rayon = "1.7.0"
+rayon = "1.8.0"
 exr = "1.71.0"
 flamegraph = "0.6.3"
 

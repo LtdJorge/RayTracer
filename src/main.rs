@@ -2,6 +2,7 @@
 
 // Peter Shirley's "Raytracing in one Weekend" implemented in Rust
 
+use clap::Parser;
 use rayon::prelude::*;
 
 use output::image;
@@ -9,12 +10,14 @@ use rendering::sampling;
 
 use crate::hittables::{Hittable, HittableList, Sphere};
 use crate::image::write_color_multisample_batch;
+use crate::input::Args;
 use crate::math::{clamp, random_double, Color, Point3, Ray, Vec3};
 use crate::output::image::write_exr;
 use crate::rendering::Camera;
 use crate::rendering::UberShader;
 
 mod hittables;
+mod input;
 mod materials;
 mod math;
 mod output;
@@ -23,12 +26,14 @@ mod rendering;
 // use std::time::Instant;
 
 fn main() {
+    let args = Args::parse();
     // Image
-    let aspect_ratio = 16.0 / 9.0;
-    let image_width: usize = 1920;
-    let image_height = (image_width as f64 / aspect_ratio) as usize;
-    let samples_per_pixel = 50;
-    let max_depth = 20;
+    // let aspect_ratio = 16.0 / 9.0;
+    let image_width: usize = args.width;
+    // let image_height = (image_width as f64 / aspect_ratio) as usize;
+    let image_height = args.height;
+    let samples_per_pixel = args.samples;
+    let max_depth = args.diffuse_bounces;
 
     // World
     let mut world: HittableList<Sphere> = HittableList { objects: vec![] };

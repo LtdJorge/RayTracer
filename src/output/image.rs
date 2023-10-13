@@ -143,8 +143,8 @@ pub fn write_exr(
                 println!("progress: {}%", current_progress_percentage)
             }
         })
-        .to_file(path)
+        .to_file(&path)
         .unwrap();
 
-    eprintln!("created file custom_channels.exr");
+    eprintln!("created file {}", path.to_str().unwrap());
 }

@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 rand = "0.8.5"
 rayon = "1.10.0"
-exr = "1.72.0"
+exr = "1.73.0"
 flamegraph = "0.6.5"
 clap = { version = "4.5.20", features = ["derive"] }
 

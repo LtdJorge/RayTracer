@@ -9,7 +9,7 @@ edition = "2021"
 rand = "0.8.5"
 rayon = "1.10.0"
 exr = "1.73.0"
-flamegraph = "0.6.6"
+flamegraph = "0.6.7"
 clap = { version = "4.5.26", features = ["derive"] }
 
 [profile.release]
